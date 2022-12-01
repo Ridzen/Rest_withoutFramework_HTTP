@@ -10,47 +10,18 @@
 
 # Протокол HTTP
 #
-# HyperText Transfer Protocol (HTTP) — это протокол передачи данных. #
-# Изначально для передачи данных в виде гипертекстовых документов в формате HTML,
-# сегодня — для передачи произвольных данных.
-#
-# Этот протокол имеет две особенности, которые должны учитывать все,
-# кто работает с этим протоколом: ресурсы и HTTP-глаголы.
-#________________________________________________________________________________________________________________________________
-# import socket
-#
-# # def start_my_server():
-# from datetime import datetime
-#
-# server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#
-#
-# server.bind(('127.0.0.1', 2000))
-# server.listen(4)
-#
-# print('Working ...')
-#
-# client_socket, address = server.accept()
-#
-# data = client_socket.recv(1024).decode('utf-8')
-# now_date = str(datetime.now().strftime('%H:%M %d.%m.%y'))
-# # print(data)
-#
-# HDRS = 'HTTP/1.1 200 OK\r\nContent-Type: text/html: charset=utf-f\r\n\r\n'
-#
-# content = 'Well done, Akbar let\' continue...'.encode('utf-8')
-#
-# client_socket.send(HDRS.encode('utf-8') + content)
-#
-# print('shutdown this shit ....')
+# HyperText Transfer Protocol (HTTP)
+# ________________________________________________________________________________________________________________________________
 
 
-from datetime import date, datetime
+from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 
-HOST = 'localhost'
-PORT = 4444
+HOST_Owner = 'localhost'  # На локальном его открываем
+PORT_Owner = 4444  # Порт
+
+# Наша запись выглядит примерно так http://localhost:4444/ сюда мы кидаем наш запрос через PostMan
 
 
 class TestHHTP(BaseHTTPRequestHandler):
@@ -60,21 +31,21 @@ class TestHHTP(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
 
-        content_len = int(self.headers.get('Content-Length'))
-        post_body = self.rfile.read(content_len)
+        c_len = int(self.headers.get('Content-Length'))
+        post_body = self.rfile.read(c_len)
         decode_body = post_body.decode()
         json_body = json.loads(decode_body)
-        self.wfile.write(bytes('{"message": "Успех, Проверь консоль"}', "utf-8"))
+        self.wfile.write(bytes('{"message": "Запрос прошел, Проверь консоль"}', "utf-8"))  # Если запрос прошел приходит такое вот сообщение
 
-        now_date = str(datetime.now().strftime('%H:%M %d.%m.%y'))
+        now_date = str(datetime.now().strftime('%H:%M %d.%m.%y'))  # Формат time по которую мы задаем, сначала час, минута, день, месяц, год
         print(now_date)
 
-        if now_date == json_body['time']:
+        if now_date == json_body['time']:  # Если формат данных приходит верно, и time совпадает то приходит вот это фраза
             print("Все работает")
             print(json_body['name'])
 
 
-server = HTTPServer((HOST, PORT), TestHHTP)
+server = HTTPServer((HOST_Owner, PORT_Owner), TestHHTP)
 print('Server is running...')
 
 server.serve_forever()
